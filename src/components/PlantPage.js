@@ -6,6 +6,7 @@ const plantURL = "http://localhost:6001/plants";
 
 function PlantPage() {
   const [plantData, setPlantData] = useState([]);
+  const [searchPlant, setSearchPlant] = useState("");
 
   useEffect(() => {
     fetch(plantURL)
@@ -14,6 +15,10 @@ function PlantPage() {
         setPlantData(data);
       });
   }, []);
+
+  function updateSearchPlant(value) {
+    setSearchPlant(value);
+  }
 
   const addPlant = (newPlant) => {
     fetch(plantURL, {
@@ -31,11 +36,15 @@ function PlantPage() {
       });
   };
 
+  const plantsToDisplay = plantData.filter((plant) => {
+    return plant.name.toLowerCase().includes(searchPlant.toLowerCase());
+  });
+
   return (
     <main>
       <NewPlantForm addPlant={addPlant} />
-      <Search />
-      <PlantList plantData={plantData} />
+      <Search updateSearchPlant={updateSearchPlant} searchPlant={searchPlant} />
+      <PlantList plantData={plantsToDisplay} />
     </main>
   );
 }
