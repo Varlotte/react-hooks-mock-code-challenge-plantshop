@@ -6,20 +6,34 @@ const plantURL = "http://localhost:6001/plants";
 
 function PlantPage() {
   const [plantData, setPlantData] = useState([]);
-  const fetchData = () => {
+
+  useEffect(() => {
     fetch(plantURL)
       .then((r) => r.json())
       .then((data) => {
         setPlantData(data);
       });
-  };
-  useEffect(() => {
-    fetchData();
   }, []);
+
+  const addPlant = (newPlant) => {
+    fetch(plantURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newPlant),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const updatedList = [...plantData, data];
+
+        setPlantData(updatedList);
+      });
+  };
 
   return (
     <main>
-      <NewPlantForm />
+      <NewPlantForm addPlant={addPlant} />
       <Search />
       <PlantList plantData={plantData} />
     </main>
